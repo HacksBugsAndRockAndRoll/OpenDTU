@@ -14,6 +14,7 @@
 #include <Arduino.h>
 #include <LittleFS.h>
 # include "ConfigFix.h"
+#include "SevenSegment.h"
 
 void setup()
 {
@@ -52,6 +53,11 @@ void setup()
         Serial.print(F("migrated... "));
         Configuration.migrate();
     }
+    Serial.println(F("done"));
+
+    // Initialize 7 Segment display
+    Serial.print(F("Initialize Display... "));
+    SevenSegment.init();
     Serial.println(F("done"));
 
     // Initialize WiFi
@@ -129,6 +135,9 @@ void loop()
     yield();
     WebApi.loop();
     yield();
+    SevenSegment.loop();
+    yield();
     ConfigFix.loop();
     yield();
+
 }
