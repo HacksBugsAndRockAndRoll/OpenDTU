@@ -19,7 +19,7 @@ void SevenSegmentClass::init()
     shift(0x0f, 0x00); //display test register - test mode off
     shift(0x0c, 0x01); //shutdown register - normal operation
     shift(0x0b, 0x07); //scan limit register - display digits 0 thru 7
-    shift(0x0a, 0x0f); //intensity register - max brightness
+    shift(0x0a, 0x07); //intensity register
     shift(0x09, 0xff); //decode mode register - CodeB decode all digits
     writeEmpty();
 }
@@ -35,7 +35,7 @@ void SevenSegmentClass::loop()
           auto inv = Hoymiles.getInverterByPos(i);
           for (uint8_t c = 0; c <= inv->Statistics()->getChannelCount(); c++) {
             if(inv->Statistics()->hasChannelFieldValue(c,FLD_PAC)){
-              uint8_t acPower = (uint8_t)inv->Statistics()->getChannelFieldValue(c, FLD_PAC);
+              uint8_t acPower = (uint8_t)inv->Statistics()->getChannelFieldValue(c, FLD_PAC) * 10;
               write(i,acPower);
               wroteStats = true;
             }
@@ -77,7 +77,8 @@ void SevenSegmentClass::write(int inverter, int acPower)
   //inverter
   shift(0x08,inverter / 10);
   shift(0x07,inverter % 10);
-  shift(0x06,DASH); // -
+  shift(0x06,_toggle ? DASH : BLANK); // blinking dash as activity indicator
+  _toggle = !_toggle;
   //power
   shift(0x05,acPower / 10000 == 0 ? BLANK : acPower / 10000);
   acPower = acPower % 10000;
@@ -85,7 +86,8 @@ void SevenSegmentClass::write(int inverter, int acPower)
   acPower = acPower % 1000;
   shift(0x03,acPower / 100 == 0 ? BLANK : acPower / 100);
   acPower = acPower % 100;
-  shift(0x02,acPower / 10 == 0 ? BLANK : acPower / 10);
+  //decimal
+  shift(0x02,(acPower / 10) + 128 );
   acPower = acPower % 10;
   shift(0x01,acPower);
 }

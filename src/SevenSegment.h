@@ -20,5 +20,6 @@ class SevenSegmentClass {
     void shift(byte send_to_address, byte send_this_data);
     uint32_t _refreshInterval = 10;
     uint32_t _lastRefresh = 0;
+    boolean _toggle = false;
 };
 extern SevenSegmentClass SevenSegment;
