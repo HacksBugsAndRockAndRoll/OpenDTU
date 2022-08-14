@@ -46,7 +46,7 @@ void SevenSegmentClass::loop()
           break;
         }
       }
-      if(!wroteStats){
+      if(!wroteStats || inv->Statistics()->getLastUpdate() < millis() - 60000){
         writeNa(next);
       }
     }
