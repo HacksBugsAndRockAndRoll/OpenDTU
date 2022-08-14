@@ -18,8 +18,10 @@ class SevenSegmentClass {
     void write(int inverter, int acPower);
     void writeEmpty();
     void shift(byte send_to_address, byte send_this_data);
+    void writeNa(int inverter);
+    void writeInverter(int inverter);
     uint32_t _refreshInterval = 10;
     uint32_t _lastRefresh = 0;
-    boolean _toggle = false;
+    uint8_t _lastShownPos = 0;
 };
 extern SevenSegmentClass SevenSegment;

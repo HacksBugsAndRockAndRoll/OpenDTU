@@ -30,21 +30,25 @@ void SevenSegmentClass::loop()
     boolean wroteStats = false;
     if(Hoymiles.getNumInverters() == 0){
       writeEmpty();
+      _lastShownPos = 0;
     }else{
-        for (uint8_t i = 0; i < Hoymiles.getNumInverters(); i++) {
-          auto inv = Hoymiles.getInverterByPos(i);
-          for (uint8_t c = 0; c <= inv->Statistics()->getChannelCount(); c++) {
-            if(inv->Statistics()->hasChannelFieldValue(c,FLD_PAC)){
-              uint8_t acPower = (uint8_t)inv->Statistics()->getChannelFieldValue(c, FLD_PAC) * 10;
-              write(i,acPower);
-              wroteStats = true;
-            }
-          }
-          if(!wroteStats){
-            write(i,0);
-          }
-          wroteStats = false;
+      uint8_t next = _lastShownPos +1;
+      if(next >= Hoymiles.getNumInverters()){
+        next = 0;
+      }
+      auto inv = Hoymiles.getInverterByPos(next);
+      _lastShownPos=next;
+      for (uint8_t c = 0; c <= inv->Statistics()->getChannelCount(); c++) {
+        if(inv->Statistics()->hasChannelFieldValue(c,FLD_PAC)){
+          uint8_t acPower = (uint8_t)inv->Statistics()->getChannelFieldValue(c, FLD_PAC) * 10;
+          write(next,acPower);
+          wroteStats = true;
+          break;
         }
+      }
+      if(!wroteStats){
+        writeNa(next);
+      }
     }
     _lastRefresh = millis();
   }
@@ -70,15 +74,26 @@ void SevenSegmentClass::shift(byte send_to_address, byte send_this_data)
   digitalWrite(MAX7219_Chip_Select, HIGH);
 }
 
-void SevenSegmentClass::write(int inverter, int acPower)
-{
+void SevenSegmentClass::writeNa(int inverter){
+  writeInverter(inverter);
+  shift(0x05,BLANK);
+  shift(0x04,DASH);
+  shift(0x03,DASH);
+  shift(0x02,DASH);
+  shift(0x01,DASH);
+}
+
+void SevenSegmentClass::writeInverter(int inverter){
   inverter++; // start at 1
-  Serial.printf("write i: %d, pac: %d\n",inverter,acPower);
   //inverter
   shift(0x08,inverter / 10);
   shift(0x07,inverter % 10);
-  shift(0x06,_toggle ? DASH : BLANK); // blinking dash as activity indicator
-  _toggle = !_toggle;
+  shift(0x06,DASH); // blinking dash as activity indicator
+}
+
+void SevenSegmentClass::write(int inverter, int acPower)
+{
+  writeInverter(inverter);
   //power
   shift(0x05,acPower / 10000 == 0 ? BLANK : acPower / 10000);
   acPower = acPower % 10000;
