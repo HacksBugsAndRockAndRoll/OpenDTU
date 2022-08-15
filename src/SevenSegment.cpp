@@ -47,7 +47,7 @@ void SevenSegmentClass::loop()
       {
         if (inv->Statistics()->hasChannelFieldValue(channel, FLD_PAC))
         {
-          int acPower = (int)inv->Statistics()->getChannelFieldValue(channel, FLD_PAC);
+          int acPower = (int)(inv->Statistics()->getChannelFieldValue(channel, FLD_PAC) * 10);
           write(next, acPower);
           wroteStats = true;
           break;
@@ -113,7 +113,8 @@ void SevenSegmentClass::write(int inverter, int acPower)
   acPower = acPower % 1000;
   shift(0x03, acPower / 100 == 0 ? BLANK : acPower / 100);
   acPower = acPower % 100;
-  shift(0x02, (acPower / 10));
+  //decimal
+  shift(0x02, (acPower / 10)+128);
   acPower = acPower % 10;
   shift(0x01, acPower);
 }
