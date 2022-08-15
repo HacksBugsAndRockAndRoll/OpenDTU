@@ -47,7 +47,7 @@ void SevenSegmentClass::loop()
       {
         if (inv->Statistics()->hasChannelFieldValue(channel, FLD_PAC))
         {
-          uint8_t acPower = (uint8_t)inv->Statistics()->getChannelFieldValue(channel, FLD_PAC);
+          int acPower = (int)inv->Statistics()->getChannelFieldValue(channel, FLD_PAC);
           write(next, acPower);
           wroteStats = true;
           break;
