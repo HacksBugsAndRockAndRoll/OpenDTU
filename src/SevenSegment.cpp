@@ -43,11 +43,11 @@ void SevenSegmentClass::loop()
       }
       auto inv = Hoymiles.getInverterByPos(next);
       _lastShownPos = next;
-      for (uint8_t c = 0; c <= inv->Statistics()->getChannelCount(); c++)
+      for (uint8_t channel = 0; channel <= inv->Statistics()->getChannelCount(); channel++)
       {
-        if (inv->Statistics()->hasChannelFieldValue(c, FLD_PAC))
+        if (inv->Statistics()->hasChannelFieldValue(channel, FLD_PAC))
         {
-          uint8_t acPower = (uint8_t)inv->Statistics()->getChannelFieldValue(c, FLD_PAC) * 10;
+          uint8_t acPower = (uint8_t)inv->Statistics()->getChannelFieldValue(channel, FLD_PAC);
           write(next, acPower);
           wroteStats = true;
           break;
@@ -103,6 +103,8 @@ void SevenSegmentClass::writeInverter(int inverter)
 
 void SevenSegmentClass::write(int inverter, int acPower)
 {
+  Serial.printf("write inv: %d, power: %d \n",inverter,acPower);
+
   writeInverter(inverter);
   // power
   shift(0x05, acPower / 10000 == 0 ? BLANK : acPower / 10000);
@@ -111,8 +113,7 @@ void SevenSegmentClass::write(int inverter, int acPower)
   acPower = acPower % 1000;
   shift(0x03, acPower / 100 == 0 ? BLANK : acPower / 100);
   acPower = acPower % 100;
-  // decimal
-  shift(0x02, (acPower / 10) + 128);
+  shift(0x02, (acPower / 10));
   acPower = acPower % 10;
   shift(0x01, acPower);
 }
