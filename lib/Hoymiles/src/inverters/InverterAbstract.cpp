@@ -8,6 +8,9 @@ InverterAbstract::InverterAbstract(uint64_t serial)
     _alarmLogParser.reset(new AlarmLogParser());
     _devInfoParser.reset(new DevInfoParser());
     _statisticsParser.reset(new StatisticsParser());
+    _serialHex = String(sprintf(new char[sizeof(uint64_t) * 8 + 1], "%0lx%08lx",
+                          ((uint32_t)((serial >> 32) & 0xFFFFFFFF)),
+                          ((uint32_t)(serial & 0xFFFFFFFF))));
 }
 
 void InverterAbstract::init()
@@ -22,6 +25,11 @@ void InverterAbstract::init()
 uint64_t InverterAbstract::serial()
 {
     return _serial.u64;
+}
+
+String InverterAbstract::serialHexString()
+{
+    return _serialHex;
 }
 
 void InverterAbstract::setName(const char* name)

@@ -29,13 +29,7 @@ void WebApiDevInfoClass::onDevInfoStatus(AsyncWebServerRequest* request)
     for (uint8_t i = 0; i < Hoymiles.getNumInverters(); i++) {
         auto inv = Hoymiles.getInverterByPos(i);
 
-        // Inverter Serial is read as HEX
-        char buffer[sizeof(uint64_t) * 8 + 1];
-        sprintf(buffer, "%0lx%08lx",
-            ((uint32_t)((inv->serial() >> 32) & 0xFFFFFFFF)),
-            ((uint32_t)(inv->serial() & 0xFFFFFFFF)));
-
-        JsonObject devInfoObj = root[buffer].createNestedObject();
+        JsonObject devInfoObj = root[inv->serialHexString()].createNestedObject();
         devInfoObj[F("fw_bootloader_version")] = inv->DevInfo()->getFwBootloaderVersion();
         devInfoObj[F("fw_build_version")] = inv->DevInfo()->getFwBuildVersion();
         devInfoObj[F("hw_part_number")] = inv->DevInfo()->getHwPartNumber();

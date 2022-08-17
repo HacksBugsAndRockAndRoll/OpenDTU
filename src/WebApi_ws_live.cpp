@@ -73,12 +73,7 @@ void WebApiWsLiveClass::generateJsonResponse(JsonVariant& root)
     for (uint8_t i = 0; i < Hoymiles.getNumInverters(); i++) {
         auto inv = Hoymiles.getInverterByPos(i);
 
-        char buffer[sizeof(uint64_t) * 8 + 1];
-        sprintf(buffer, "%0lx%08lx",
-            ((uint32_t)((inv->serial() >> 32) & 0xFFFFFFFF)),
-            ((uint32_t)(inv->serial() & 0xFFFFFFFF)));
-
-        root[i][F("serial")] = String(buffer);
+        root[i][F("serial")] = inv->serialHexString();
         root[i][F("name")] = inv->name();
         root[i][F("data_age")] = (millis() - inv->Statistics()->getLastUpdate()) / 1000;
         root[i][F("age_critical")] = ((millis() - inv->Statistics()->getLastUpdate()) / 1000) > Configuration.get().Dtu_PollInterval * 5;

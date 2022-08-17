@@ -28,16 +28,10 @@ void WebApiEventlogClass::onEventlogStatus(AsyncWebServerRequest* request)
     for (uint8_t i = 0; i < Hoymiles.getNumInverters(); i++) {
         auto inv = Hoymiles.getInverterByPos(i);
 
-        // Inverter Serial is read as HEX
-        char buffer[sizeof(uint64_t) * 8 + 1];
-        sprintf(buffer, "%0lx%08lx",
-            ((uint32_t)((inv->serial() >> 32) & 0xFFFFFFFF)),
-            ((uint32_t)(inv->serial() & 0xFFFFFFFF)));
-
         uint8_t logEntryCount = inv->EventLog()->getEntryCount();
 
-        root[buffer]["count"] = logEntryCount;
-        JsonArray eventsArray = root[buffer].createNestedArray(F("events"));
+        root[inv->serialHexString()]["count"] = logEntryCount;
+        JsonArray eventsArray = root[inv->serialHexString()].createNestedArray(F("events"));
 
         for (uint8_t logEntry = 0; logEntry < logEntryCount; logEntry++) {
             JsonObject eventsObject = eventsArray.createNestedObject();

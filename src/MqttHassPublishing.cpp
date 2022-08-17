@@ -80,7 +80,7 @@ void MqttHassPublishingClass::publishField(std::shared_ptr<InverterAbstract> inv
         fieldName = inv->Statistics()->getChannelFieldName(channel, fieldType.fieldId);
     }
 
-    String configTopic = "sensor/dtu_" + inv->serialString()
+    String configTopic = "sensor/dtu_" + inv->serialHexString()
         + "/" + "ch" + String(channel) + "_" + fieldName
         + "/config";
 
@@ -98,7 +98,7 @@ void MqttHassPublishingClass::publishField(std::shared_ptr<InverterAbstract> inv
 
         DynamicJsonDocument deviceDoc(512);
         deviceDoc[F("name")] = inv->name();
-        deviceDoc[F("ids")] = inv->serialString();
+        deviceDoc[F("ids")] = inv->serialHexString();
         deviceDoc[F("cu")] = String(F("http://")) + String(WiFi.localIP().toString());
         deviceDoc[F("mf")] = F("OpenDTU");
         deviceDoc[F("mdl")] = inv->typeName();
@@ -109,7 +109,7 @@ void MqttHassPublishingClass::publishField(std::shared_ptr<InverterAbstract> inv
         root[F("name")] = name;
         root[F("stat_t")] = stateTopic;
         root[F("unit_of_meas")] = inv->Statistics()->getChannelFieldUnit(channel, fieldType.fieldId);
-        root[F("uniq_id")] = inv->serialString() + "_ch" + String(channel) + "_" + fieldName;
+        root[F("uniq_id")] = inv->serialHexString() + "_ch" + String(channel) + "_" + fieldName;
         root[F("dev")] = deviceObj;
         root[F("exp_aft")] = Configuration.get().Mqtt_PublishInterval * 2;
         if (devCls != 0) {

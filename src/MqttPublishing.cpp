@@ -28,7 +28,7 @@ void MqttPublishingClass::loop()
         // Loop all inverters
         for (uint8_t i = 0; i < Hoymiles.getNumInverters(); i++) {
             auto inv = Hoymiles.getInverterByPos(i);
-            String subtopic = inv->serialString();
+            String subtopic = inv->serialHexString();
 
             // Name
             MqttSettings.publish(subtopic + "/name", inv->name());
@@ -95,5 +95,5 @@ String MqttPublishingClass::getTopic(std::shared_ptr<InverterAbstract> inv, uint
         chanName.toLowerCase();
     }
 
-    return inv->serialString() + "/" + String(channel) + "/" + chanName;
+    return inv->serialHexString() + "/" + String(channel) + "/" + chanName;
 }
