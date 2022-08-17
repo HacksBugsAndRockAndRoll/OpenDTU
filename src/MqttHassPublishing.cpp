@@ -126,7 +126,7 @@ void MqttHassPublishingClass::publishField(std::shared_ptr<InverterAbstract> inv
             root[F("stat_cla")] = stateCls;
         }
 
-        char buffer[512];
+        char buffer[1024];
         serializeJson(root, buffer);
         MqttSettings.publishHass(configTopic, buffer);
     }
