@@ -27,6 +27,7 @@ public:
     InverterAbstract(uint64_t serial);
     void init();
     uint64_t serial();
+    String serialString(){return String(serial(),10);};
     void setName(const char* name);
     const char* name();
     virtual String typeName() = 0;

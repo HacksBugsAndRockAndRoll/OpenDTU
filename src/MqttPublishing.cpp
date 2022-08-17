@@ -28,12 +28,7 @@ void MqttPublishingClass::loop()
         // Loop all inverters
         for (uint8_t i = 0; i < Hoymiles.getNumInverters(); i++) {
             auto inv = Hoymiles.getInverterByPos(i);
-
-            char buffer[sizeof(uint64_t) * 8 + 1];
-            sprintf(buffer, "%0lx%08lx",
-                ((uint32_t)((inv->serial() >> 32) & 0xFFFFFFFF)),
-                ((uint32_t)(inv->serial() & 0xFFFFFFFF)));
-            String subtopic = String(buffer);
+            String subtopic = inv->serialString();
 
             // Name
             MqttSettings.publish(subtopic + "/name", inv->name());
@@ -92,13 +87,6 @@ String MqttPublishingClass::getTopic(std::shared_ptr<InverterAbstract> inv, uint
     if (!inv->Statistics()->hasChannelFieldValue(channel, fieldId)) {
         return String("");
     }
-
-    char buffer[sizeof(uint64_t) * 8 + 1];
-    sprintf(buffer, "%0lx%08lx",
-        ((uint32_t)((inv->serial() >> 32) & 0xFFFFFFFF)),
-        ((uint32_t)(inv->serial() & 0xFFFFFFFF)));
-    String invSerial = String(buffer);
-
     String chanName;
     if (channel == 0 && fieldId == FLD_PDC) {
         chanName = "powerdc";
@@ -107,5 +95,5 @@ String MqttPublishingClass::getTopic(std::shared_ptr<InverterAbstract> inv, uint
         chanName.toLowerCase();
     }
 
-    return invSerial + "/" + String(channel) + "/" + chanName;
+    return inv->serialString() + "/" + String(channel) + "/" + chanName;
 }
