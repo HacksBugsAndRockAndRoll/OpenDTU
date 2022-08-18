@@ -13,6 +13,7 @@
 #include "defaults.h"
 #include <Arduino.h>
 #include <LittleFS.h>
+# include "ConfigFix.h"
 
 void setup()
 {
@@ -81,6 +82,11 @@ void setup()
     const CONFIG_T& config = Configuration.get();
     Hoymiles.init();
 
+    // Initialize ConfigFix workaround
+    Serial.print(F("Initialize WebApi... "));
+    ConfigFix.init();
+    Serial.println(F("done"));
+
     Serial.println(F("  Setting radio PA level... "));
     Hoymiles.getRadio()->setPALevel((rf24_pa_dbm_e)config.Dtu_PaLevel);
 
@@ -122,5 +128,7 @@ void loop()
     MqttHassPublishing.loop();
     yield();
     WebApi.loop();
+    yield();
+    ConfigFix.loop();
     yield();
 }
