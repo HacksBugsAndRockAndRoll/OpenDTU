@@ -116,7 +116,7 @@ public:
 private:
     uint8_t _payloadStatistic[STATISTIC_PACKET_SIZE] = {};
     uint8_t _statisticLength = 0;
-    uint16_t _chanMaxPower[CH4];
+    uint16_t _chanMaxPower[CH4] = {};
 
     const byteAssign_t* _byteAssignment;
     uint8_t _byteAssignmentCount;

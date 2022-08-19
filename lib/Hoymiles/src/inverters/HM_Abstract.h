@@ -9,7 +9,6 @@ public:
     bool sendAlarmLogRequest(HoymilesRadio* radio);
     bool sendDevInfoRequest(HoymilesRadio* radio);
     bool sendSystemConfigParaRequest(HoymilesRadio* radio);
-
 private:
     uint8_t _lastAlarmLogCnt = 0;
 };
