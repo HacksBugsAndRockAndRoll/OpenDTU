@@ -18,6 +18,8 @@ void ConfigFixClass::loop()
                 auto inv = Hoymiles.getInverterBySerial(config.Inverter[i].Serial);
                 if (inv == nullptr)
                 {
+                    Serial.println("config error, restarting");
+                    Serial.flush();
                     ESP.restart();
                 }
             }
