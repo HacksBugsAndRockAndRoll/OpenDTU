@@ -13,7 +13,7 @@ public:
 
     CommandAbstract* getRequestFrameCommand(uint8_t frame_no) override;
 
-    virtual bool handleResponse(InverterAbstract* inverter, fragment_t fragment[], uint8_t max_fragment_id) override;
+    bool handleResponse(InverterAbstract* inverter, fragment_t fragment[], uint8_t max_fragment_id) override;
 
 protected:
     void setDataType(uint8_t data_type);
